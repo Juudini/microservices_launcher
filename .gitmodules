@@ -1,0 +1,9 @@
+[submodule "products_microservice"]
+	path = products_microservice
+	url = https://github.com/Juudini/products_microservice
+[submodule "orders_microservice"]
+	path = orders_microservice
+	url = https://github.com/Juudini/orders_microservice
+[submodule "client_gateway"]
+	path = client_gateway
+	url = https://github.com/Juudini/client_gateway
