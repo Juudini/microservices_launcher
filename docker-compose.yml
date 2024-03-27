@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  nats-server:
+    image: nats:latest
+    ports:
+      - '8222:8222'
+
+  client_gateway:
+    build: ./client_gateway
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./client_gateway/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3000
+      - NATS_SERVERS=${NATS_SERVERS}
+
+  products_microservice:
+    build: ./products_microservice
+    volumes:
+      - ./products_microservice/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${PRODUCTS_MS_PORT}
+      - NATS_SERVERS=${NATS_SERVERS}
+      - DATABASE_URL=file:./dev.db
+
+  orders_microservice:
+    depends_on:
+      - orders-db
+    build: ./orders_microservice
+    volumes:
+      - ./orders_microservice/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${ORDERS_MS_PORT}
+      - DATABASE_URL=${ORDER_DATABASE_URL}
+      - NATS_SERVERS=${NATS_SERVERS}
+
+  orders-db:
+    image: postgres:latest
+    container_name: orders_db
+    restart: always
+    ports:
+      - '${ORDER_DB_DOCKER}:${ORDER_DB_PORT}'
+    volumes:
+      - ./orders_microservice/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${ORDER_DB_USERNAME}
+      POSTGRES_PASSWORD: ${ORDER_DB_PASSWORD}
+      POSTGRES_DB: ${ORDER_DB_NAME}
