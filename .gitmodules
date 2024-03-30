@@ -7,3 +7,6 @@
 [submodule "client_gateway"]
 	path = client_gateway
 	url = https://github.com/Juudini/client_gateway
+[submodule "payments_microservice"]
+	path = payments_microservice
+	url = https://github.com/Juudini/payments_microservice

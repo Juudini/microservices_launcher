@@ -51,3 +51,15 @@ services:
       POSTGRES_USER: ${ORDER_DB_USERNAME}
       POSTGRES_PASSWORD: ${ORDER_DB_PASSWORD}
       POSTGRES_DB: ${ORDER_DB_NAME}
+
+  payments-microservice:
+    build: ./payments_microservice
+    volumes:
+      - ./payments_microservice/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${PAYMENTS_MS_PORT}
+      - NATS_SERVERS=${NATS_SERVERS}
+      - BASE_URL=${PAYMENTS_BASE_URL}
+      - STRIPE_SECRET=${PAYMENTS_STRIPE_SECRET}
+      - STRIPE_ENDPOINT_SECRET=${PAYMENTS_STRIPE_ENDPOINT_SECRET}
