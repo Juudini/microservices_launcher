@@ -6,17 +6,19 @@ services:
     ports:
       - '8222:8222'
 
+  #~> Client Gateway Microservice
   client_gateway:
     build: ./client_gateway
     ports:
-      - '3000:3000'
+      - ${CLIENT_GATEWAY_DOCKER_PORT}:${CLIENT_GATEWAY_PORT}
     volumes:
       - ./client_gateway/src:/usr/src/app/src
     command: npm run start:dev
     environment:
-      - PORT=3000
+      - PORT=${CLIENT_GATEWAY_MS_PORT}
       - NATS_SERVERS=${NATS_SERVERS}
 
+  #~> Products Microservice
   products_microservice:
     build: ./products_microservice
     volumes:
@@ -25,8 +27,9 @@ services:
     environment:
       - PORT=${PRODUCTS_MS_PORT}
       - NATS_SERVERS=${NATS_SERVERS}
-      - DATABASE_URL=file:./dev.db
+      - DATABASE_URL=${PRODUCTS_DATABASE_URL}
 
+  #~> Orders Microservice
   orders_microservice:
     depends_on:
       - orders-db
@@ -36,30 +39,35 @@ services:
     command: npm run start:dev
     environment:
       - PORT=${ORDERS_MS_PORT}
-      - DATABASE_URL=${ORDER_DATABASE_URL}
+      - DATABASE_URL=${ORDERS_DATABASE_URL}
       - NATS_SERVERS=${NATS_SERVERS}
 
+  #~> Orders Database
   orders-db:
+    container_name: orders_database
     image: postgres:latest
-    container_name: orders_db
     restart: always
-    ports:
-      - '${ORDER_DB_DOCKER}:${ORDER_DB_PORT}'
     volumes:
       - ./orders_microservice/postgres:/var/lib/postgresql/data
+    ports:
+      - ${ORDERS_DB_DOCKER_PORT}:${ORDERS_DB_PORT}
     environment:
-      POSTGRES_USER: ${ORDER_DB_USERNAME}
-      POSTGRES_PASSWORD: ${ORDER_DB_PASSWORD}
-      POSTGRES_DB: ${ORDER_DB_NAME}
+      - POSTGRES_USER=${ORDERS_DB_USER}
+      - POSTGRES_PASSWORD=${ORDERS_DB_PASSWORD}
+      - POSTGRES_DB=${ORDERS_DB_NAME}
 
-  payments-microservice:
+  #~> Payments Microservice
+  payments_microservice:
+    container_name: payments_microservice
     build: ./payments_microservice
     volumes:
       - ./payments_microservice/src:/usr/src/app/src
     command: npm run start:dev
+    ports:
+      - ${PAYMENTS_MS_PORT}:${PAYMENTS_MS_PORT}
     environment:
       - PORT=${PAYMENTS_MS_PORT}
       - NATS_SERVERS=${NATS_SERVERS}
-      - BASE_URL=${PAYMENTS_BASE_URL}
       - STRIPE_SECRET=${PAYMENTS_STRIPE_SECRET}
+      - BASE_URL=${STRIPE_BASE_URL}
       - STRIPE_ENDPOINT_SECRET=${PAYMENTS_STRIPE_ENDPOINT_SECRET}
