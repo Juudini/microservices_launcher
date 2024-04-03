@@ -10,3 +10,6 @@
 [submodule "payments_microservice"]
 	path = payments_microservice
 	url = https://github.com/Juudini/payments_microservice
+[submodule "auth_microservice"]
+	path = auth_microservice
+	url = git@github.com:Juudini/auth_microservice.git

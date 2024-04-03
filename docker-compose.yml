@@ -18,6 +18,18 @@ services:
       - PORT=${CLIENT_GATEWAY_MS_PORT}
       - NATS_SERVERS=${NATS_SERVERS}
 
+  #~> Auth Microservice
+  auth_microservice:
+    build: ./auth_microservice
+    volumes:
+      - ./auth_microservice/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${AUTH_MS_PORT}
+      - NATS_SERVERS=${NATS_SERVERS}
+      - DATABASE_URL=${AUTH_DATABASE_URL}
+      - JWT_SECRET=${AUTH_JWT_SECRET}
+
   #~> Products Microservice
   products_microservice:
     build: ./products_microservice
