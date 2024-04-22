@@ -2,9 +2,24 @@
 
 ![Ing Progress](https://img.shields.io/badge/Status-In%20Progress-yellow)
 
+## Installation
+
+```bash
+# clone this repository
+$ git clone https://github.com/Juudini/microservices_launcher
+
+# move to project directory
+$ cd microservices_launcher
+
+# install dependencies
+$ npm install
+```
+
 ## Running the app as Dev mode
 
 ```bash
+# rebuild the sub-modules
+$ git submodule update --init --recursive
 # up docker's
 $ docker compose up --build
 ```
